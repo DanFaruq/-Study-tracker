@@ -1023,6 +1023,8 @@ export default function App() {
     return events.sort((a, b) => a.date.localeCompare(b.date));
   }, [topics, assignments, exams, subjects]);
 
+  const docFileRef = useRef();
+
   if (!mounted || !data) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -1135,8 +1137,6 @@ export default function App() {
     { key: "analytics",   label: "Analytics",       icon: I.chart },
     { key: "settings",    label: "Settings",        icon: I.settings },
   ];
-
-  const docFileRef = useRef();
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
