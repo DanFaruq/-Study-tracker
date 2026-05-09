@@ -971,29 +971,16 @@ export default function App() {
 
   const patch = useCallback(fn => setData(prev => ({ ...prev, ...fn(prev) })), []);
 
-  if (!mounted || !data) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center mx-auto">
-            <Icon path={I.book} size={22} className="text-white" />
-          </div>
-          <p className="text-sm text-slate-500 font-medium">Loading ReadTrack…</p>
-        </div>
-      </div>
-    );
-  }
-
-  const subjects = data.subjects || [];
-  const topics = data.topics || [];
-  const exams = data.exams || [];
-  const mcqSessions = data.mcqSessions || [];
-  const documents = data.documents || [];
+  const subjects = data?.subjects || [];
+  const topics = data?.topics || [];
+  const exams = data?.exams || [];
+  const mcqSessions = data?.mcqSessions || [];
+  const documents = data?.documents || [];
 
   const assignments = useMemo(() => {
     const today = todayISO();
-    return (data.assignments || []).map(a => ({ ...a, status: a.isSubmitted ? "submitted" : (a.dueDate && a.dueDate < today ? "overdue" : "pending") }));
-  }, [data.assignments]);
+    return (data?.assignments || []).map(a => ({ ...a, status: a.isSubmitted ? "submitted" : (a.dueDate && a.dueDate < today ? "overdue" : "pending") }));
+  }, [data?.assignments]);
 
   const subjectProgress = useMemo(() => subjects.map(s => {
     const st = topics.filter(t => t.subjectId === s.id);
@@ -1035,6 +1022,19 @@ export default function App() {
     ];
     return events.sort((a, b) => a.date.localeCompare(b.date));
   }, [topics, assignments, exams, subjects]);
+
+  if (!mounted || !data) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center mx-auto">
+            <Icon path={I.book} size={22} className="text-white" />
+          </div>
+          <p className="text-sm text-slate-500 font-medium">Loading ReadTrack…</p>
+        </div>
+      </div>
+    );
+  }
 
   // ── Mutations ──────────────────────────────────────────────────────────────
   function saveSubject(form) {
