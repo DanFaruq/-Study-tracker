@@ -290,7 +290,7 @@ function DocumentReader({ document: doc, onClose, onAttachToTopic, subjects, top
     const pageText = pages[currentPage - 1]?.content || "";
     const ctx = ctxText || (selectedText ? `Selected: "${selectedText}"\n\nPage: ${pageText}` : `Page content:\n${pageText}`);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/.netlify/functions/claude", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 800, system: `You are Homelander, an expert medical study AI. The student is reading "${doc?.name}". Answer concisely with clinical precision. Use bullet points for lists. Under 300 words unless a complex topic demands more.`, messages: [{ role: "user", content: `${ctx}\n\nQuestion: ${prompt}` }] })
@@ -696,7 +696,7 @@ function MCQPage({ subjects, topics, documents, mcqSessions, onSaveSession }) {
     setGenerating(true);
     const n = Math.min(60, Math.max(5, Number(genForm.numQuestions) || 20));
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/.netlify/functions/claude", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 8000, system: `Generate exactly ${n} MBBS-standard MCQs. Return ONLY valid JSON: {"questions":[{"q":"...","opts":["A","B","C","D"],"ans":0,"exp":"..."}]}. "ans" is 0-based. No preamble, no markdown.`, messages: [{ role: "user", content: `Subject: ${subject?.name || "General"}\nTopic: ${topic?.title || doc?.name || "Study Material"}\n\nContent:\n${ctx.slice(0, 8000)}\n\nGenerate ${n} MCQs.` }] })
@@ -844,7 +844,7 @@ function HomelanderChat({ data, subjects, topics, assignments, exams, stats, doc
     setLoading(true);
     try {
       const history = messages.slice(-12).map(m => ({ role: m.role, content: m.content }));
-      const res = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: buildSystem(), messages: [...history, { role: "user", content: msg }] }) });
+      const res = await fetch("/.netlify/functions/claude", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: buildSystem(), messages: [...history, { role: "user", content: msg }] }) });
       const result = await res.json();
       setMessages(prev => [...prev, { role: "assistant", content: result.content?.[0]?.text || "Sorry, I had trouble responding.", time: new Date().toISOString() }]);
     } catch { setMessages(prev => [...prev, { role: "assistant", content: "Connection issue. Please try again.", time: new Date().toISOString() }]); }
