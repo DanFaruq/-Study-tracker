@@ -1,3 +1,4 @@
+// ReadTrack v4.1 — build 2
 import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { runMigration, persist, uid, STORAGE_KEY } from "./migration.js";
 
